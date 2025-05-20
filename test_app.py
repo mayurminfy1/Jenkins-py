@@ -1,3 +1,4 @@
-# test_app.py
-def test_example():
-    assert 1 + 1 == 2
+from app import greet
+
+def test_greet():
+    assert greet("Mayur") == "Hello, Mayur!"

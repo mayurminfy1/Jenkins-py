@@ -1,14 +1,33 @@
-# Use a lightweight Python base image
-FROM python:3.10-slim
+pipeline {
+    agent any
 
-# Set the working directory
-WORKDIR /app
+    stages {
+        stage('Clone Repo') {
+            steps {
+                echo 'Cloning repository...'
+                checkout scm
+            }
+        }
 
-# Copy project files
-COPY . .
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                sh 'docker build -t jenkins-python-basic .'
+            }
+        }
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+        stage('Run App') {
+            steps {
+                echo 'Running Python app...'
+                sh 'docker run --rm jenkins-python-basic'
+            }
+        }
 
-# Default command
-CMD ["python", "app.py"]
+        stage('Run Tests') {
+            steps {
+                echo 'Running tests...'
+                sh 'docker run --rm jenkins-python-basic pytest test_app.py'
+            }
+        }
+    }
+}
